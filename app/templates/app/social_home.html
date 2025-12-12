@@ -1,0 +1,314 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Mạng xã hội xanh 🌿{% endblock %}
+{% block main-content %}
+
+<style>
+  body {
+    background-color: #eaf6ef;
+  }
+
+  .feed-container {
+    max-width: 720px;
+    margin: auto;
+  }
+
+  /* ===== UPLOAD POST ===== */
+  .upload-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    margin: 20px auto;
+    border: 1px solid #d6e9d6;
+  }
+
+  .upload-box textarea {
+    border-radius: 10px;
+    border: 1px solid #cde9d5;
+    resize: none;
+  }
+
+  .upload-box button {
+    background-color: #198754;
+    color: #fff;
+  }
+
+  .upload-box button:hover {
+    background-color: #157347;
+  }
+
+  /* ===== POST ===== */
+  .post-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border: 1px solid #e3f2e1;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .post-header img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  .post-body img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .post-caption {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+  }
+
+  .post-actions {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #f1f1f1;
+    padding: 0.6rem 1rem;
+    color: #198754;
+  }
+
+  .post-actions button {
+    border: none;
+    background: none;
+    color: #198754;
+    font-weight: 600;
+  }
+
+  .post-actions button:hover {
+    color: #0d5f35;
+  }
+
+  /* ===== COMMENTS ===== */
+  .comment-section {
+    padding: 0.8rem 1rem;
+    border-top: 1px solid #f1f1f1;
+    background-color: #fafafa;
+  }
+
+  .comment {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.9rem;
+  }
+
+  /* avatar riêng */
+  .comment .avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  .comment-content {
+    background: #f2fef4;
+    padding: 0.6rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid #d8f3dc;
+    flex-grow: 1;
+  }
+
+  .comment small {
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+
+  /* ảnh bình luận */
+  .comment-image {
+    width: auto;
+    max-width: 100%;
+    max-height: 320px;
+    border-radius: 10px;
+    border: 1px solid #cde9d5;
+    margin-top: 8px;
+    display: block;
+    transition: transform 0.25s ease;
+    cursor: pointer;
+  }
+
+  .comment-image:hover {
+    transform: scale(1.05);
+  }
+
+  .dropdown-toggle {
+    border: none;
+    background: transparent;
+    color: #198754;
+  }
+</style>
+
+<div class="feed-container">
+
+  <!-- 🧍 PROFILE MINI -->
+  <div class="d-flex align-items-center mb-3">
+    {% if user.avatar %}
+      <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle me-2" width="50" height="50">
+    {% else %}
+      <img src="{% static 'app/images/default-avatar.png' %}" alt="Avatar" class="rounded-circle me-2" width="50" height="50">
+    {% endif %}
+    <div>
+      <strong class="text-success">{{ user.username }}</strong><br>
+      <small class="text-muted">{{ profile.location|default:"Chưa cập nhật địa chỉ" }}</small>
+    </div>
+  </div>
+
+  <!-- 📝 FORM ĐĂNG BÀI -->
+  <div class="upload-box">
+    <form method="POST" enctype="multipart/form-data" action="{% url 'upload_post' %}">
+      {% csrf_token %}
+      <textarea name="caption" class="form-control mb-2" rows="2" placeholder="Bạn đang nghĩ gì về môi trường hôm nay? 🌿"></textarea>
+      <div class="d-flex justify-content-between align-items-center">
+        <input type="file" name="image_upload" class="form-control me-2" accept="image/*">
+        <button type="submit" class="btn btn-success">Đăng</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 📰 POST LIST -->
+  {% for post in posts %}
+  <div class="post-card">
+    <div class="post-header">
+      {% if post.user.avatar %}
+        <img src="{{ post.user.avatar.url }}" alt="Avatar">
+      {% else %}
+        <img src="{% static 'app/images/default-avatar.png' %}" alt="Avatar">
+      {% endif %}
+      <div class="flex-grow-1">
+        <strong>{{ post.user.username }}</strong><br>
+        <small class="text-muted">{{ post.created_at|date:"H:i d/m/Y" }}</small>
+      </div>
+      {% if post.user == request.user %}
+      <div class="dropdown">
+        <button class="dropdown-toggle" data-bs-toggle="dropdown">⋮</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item text-success" href="{% url 'edit_post' post.id %}">✏️ Sửa bài</a></li>
+          <li><a class="dropdown-item text-danger" href="{% url 'delete_post' post.id %}" onclick="return confirm('Xóa bài viết này?')">🗑️ Xóa bài</a></li>
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="post-caption">{{ post.caption }}</div>
+
+    {% if post.image %}
+      <div class="post-body">
+        <img src="{{ post.image.url }}" alt="Post Image">
+      </div>
+    {% endif %}
+
+    <!-- ❤️ LIKE -->
+    <div class="post-actions">
+      <form method="POST" action="{% url 'like_post' post.id %}">
+        {% csrf_token %}
+        <button type="submit">❤️ Thích ({{ post.no_of_likes }})</button>
+      </form>
+    </div>
+
+    <!-- 💬 COMMENTS -->
+    <div class="comment-section">
+      {% for cmt in post.comments.all %}
+        <div class="comment d-flex align-items-start justify-content-between">
+          <div class="d-flex align-items-start">
+            {% if cmt.user.avatar %}
+              <img src="{{ cmt.user.avatar.url }}" alt="Avatar" class="avatar">
+            {% else %}
+              <img src="{% static 'app/images/default-avatar.png' %}" alt="Avatar" class="avatar">
+            {% endif %}
+            <div class="comment-content">
+              <strong>{{ cmt.user.username }}</strong><br>
+              {{ cmt.content }}
+              {% if cmt.image %}
+                <div class="mt-2">
+                  <img src="{{ cmt.image.url }}" alt="Ảnh bình luận" class="comment-image">
+                </div>
+              {% endif %}
+              <br><small>{{ cmt.created_at|date:"H:i d/m/Y" }}</small>
+            </div>
+          </div>
+
+          {% if cmt.user == request.user %}
+          <div class="dropdown ms-2">
+            <button class="btn btn-sm btn-outline-success dropdown-toggle" data-bs-toggle="dropdown">⋮</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item text-success" href="{% url 'edit_comment' cmt.id %}">✏️ Sửa</a></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'delete_comment' cmt.id %}" onclick="return confirm('Xóa bình luận này?')">🗑️ Xóa</a></li>
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+      {% empty %}
+        <p class="text-muted small">Chưa có bình luận nào.</p>
+      {% endfor %}
+
+      <!-- Form bình luận -->
+      <form method="POST" enctype="multipart/form-data" action="{% url 'add_comment' post.id %}" class="d-flex align-items-center mt-2 comment-form">
+        {% csrf_token %}
+        {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" width="35" height="35" class="rounded-circle me-2">
+        {% else %}
+          <img src="{% static 'app/images/default-avatar.png' %}" width="35" height="35" class="rounded-circle me-2">
+        {% endif %}
+
+        <div class="flex-grow-1">
+          <input type="text" name="content" class="form-control mb-2" placeholder="Viết bình luận...">
+          <input type="file" name="image" accept="image/*" class="form-control image-input mb-2" style="max-width:200px;">
+        </div>
+        <button class="btn btn-success btn-sm align-self-start">Gửi</button>
+      </form>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-center text-muted mt-4">🌱 Chưa có bài viết nào được đăng.</p>
+  {% endfor %}
+</div>
+
+<!-- 🌿 PHÓNG TO ẢNH -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = 0;
+  overlay.style.left = 0;
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.background = "rgba(0,0,0,0.8)";
+  overlay.style.display = "none";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.zIndex = 9999;
+
+  const bigImg = document.createElement("img");
+  bigImg.style.maxWidth = "95%";
+  bigImg.style.maxHeight = "90%";
+  bigImg.style.borderRadius = "10px";
+  overlay.appendChild(bigImg);
+  document.body.appendChild(overlay);
+
+  document.querySelectorAll(".comment-image").forEach(img => {
+    img.addEventListener("click", () => {
+      bigImg.src = img.src;
+      overlay.style.display = "flex";
+    });
+  });
+
+  overlay.addEventListener("click", () => {
+    overlay.style.display = "none";
+  });
+});
+</script>
+
+{% endblock %}

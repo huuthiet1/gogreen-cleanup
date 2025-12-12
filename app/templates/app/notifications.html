@@ -1,0 +1,35 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4" style="max-width: 800px;">
+  <h3 class="fw-bold text-success mb-4 text-center">🔔 Thông báo của tôi</h3>
+
+  {% if notifications %}
+    <div class="list-group shadow-sm rounded-4">
+      {% for n in notifications %}
+        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start {% if not n.is_read %}bg-light{% endif %}">
+          <div>
+            <h6 class="fw-bold mb-1">
+              {% if n.type == 'event' %}📅{% elif n.type == 'reward' %}🎁{% elif n.type == 'system' %}⚙️{% else %}🧾{% endif %}
+              {{ n.title }}
+            </h6>
+            <p class="mb-1 text-muted small">{{ n.message }}</p>
+            <small class="text-secondary">{{ n.sent_at|date:"H:i, d/m/Y" }}</small>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-light border text-center py-4 rounded-4">
+      <p class="mb-0 text-muted fs-5">🌱 Bạn chưa có thông báo nào.</p>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  body { background-color: #f7fff7; }
+  .list-group-item { transition: 0.3s; }
+  .list-group-item:hover { background-color: #ecffec; }
+</style>
+{% endblock %}

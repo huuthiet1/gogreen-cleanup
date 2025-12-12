@@ -1,0 +1,172 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-3" style="max-width: 800px; position: relative;">
+
+  <!-- 🔙 NÚT QUAY LẠI -->
+  <a href="javascript:history.back()" class="btn-back d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-left me-2"></i> <span class="fw-semibold">Quay lại</span>
+  </a>
+
+  <!-- 🖼 ẢNH SỰ KIỆN -->
+  <div class="text-center mb-4 mt-3">
+    {% if event.event_images.all %}
+      <div id="eventCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner rounded-4 shadow-sm overflow-hidden">
+          {% for img in event.event_images.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img src="{{ img.image.url }}" class="d-block w-100 event-banner" alt="Ảnh sự kiện">
+            </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Trước</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Sau</span>
+        </button>
+      </div>
+    {% else %}
+      <img src="{% static 'app/images/logo.jpg' %}" class="event-banner" alt="Logo sự kiện">
+    {% endif %}
+  </div>
+
+  <!-- 🧾 THÔNG TIN SỰ KIỆN -->
+  <div class="text-center mb-4">
+    <h3 class="fw-bold text-success">{{ event.title }}</h3>
+    <p class="text-muted mb-1">
+      <i class="bi bi-geo-alt-fill"></i> {{ event.address|default:"Đang cập nhật" }}
+    </p>
+    <div class="d-flex justify-content-center align-items-center gap-3">
+      <span class="fs-5 fw-semibold text-success">🌿 {{ event.points|default:0 }} điểm</span>
+      <span class="text-muted small">| 👥 {{ event.participants_current }}/{{ event.participants_max }} người</span>
+    </div>
+
+    <!-- Trạng thái -->
+    <div class="mt-3">
+      {% if event.status == "upcoming" %}
+        <span class="badge bg-warning text-dark fs-6 px-3 py-2">🟡 Sắp diễn ra</span>
+      {% elif event.status == "in_progress" %}
+        <span class="badge bg-success fs-6 px-3 py-2">🟢 Đang diễn ra</span>
+      {% elif event.status == "done" %}
+        <span class="badge bg-secondary fs-6 px-3 py-2">⚫ Đã kết thúc</span>
+      {% endif %}
+    </div>
+
+    {% if event.status == "upcoming" %}
+      <div id="countdown" class="text-success mt-3 fs-5 fw-semibold"></div>
+    {% endif %}
+  </div>
+
+  <!-- 🧩 MÔ TẢ -->
+  <div class="card shadow-sm border-0 p-4 mb-4 rounded-4">
+    <h5 class="fw-bold mb-3 text-success">🧾 Thông tin chi tiết</h5>
+    <p class="lh-lg" style="white-space: pre-line;">{{ event.details|default:"Chưa có mô tả chi tiết." }}</p>
+  </div>
+
+  <!-- ⏰ THỜI GIAN -->
+  <div class="card shadow-sm border-0 p-4 mb-4 rounded-4">
+    <h5 class="fw-bold mb-3 text-success">🕒 Thời gian diễn ra</h5>
+    <p><strong>Bắt đầu:</strong> {{ event.datetime_start|date:"d/m/Y (H:i)" }}</p>
+    <p><strong>Kết thúc:</strong> {{ event.datetime_end|date:"d/m/Y (H:i)" }}</p>
+  </div>
+
+  <!-- 📍 ĐỊA ĐIỂM -->
+  <div class="card shadow-sm border-0 p-4 mb-4 rounded-4">
+    <h5 class="fw-bold mb-3 text-success">📍 Địa điểm cụ thể</h5>
+    <p>{{ event.address|default:"Đang cập nhật" }}</p>
+    {% if event.lat and event.lng %}
+      <a href="https://www.google.com/maps?q={{ event.lat }},{{ event.lng }}" 
+         target="_blank" class="btn btn-outline-success rounded-pill px-4">
+        <i class="bi bi-map"></i> Mở bản đồ
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- ☎️ LIÊN HỆ -->
+  <div class="card shadow-sm border-0 p-4 mb-4 rounded-4">
+    <h5 class="fw-bold mb-3 text-success">📞 Liên hệ</h5>
+    {% if event.contact_phone %}
+      <a href="tel:{{ event.contact_phone }}" class="text-decoration-none text-success fs-5">{{ event.contact_phone }}</a>
+    {% else %}
+      <p>Không có thông tin liên hệ.</p>
+    {% endif %}
+  </div>
+
+  <!-- ✅ NÚT ĐĂNG KÝ / HỦY-checkin_via_otp -->
+  <!-- ✅ NÚT ĐĂNG KÝ / HỦY & CHECK-IN -->
+<div class="text-center mt-4 mb-5">
+
+  <!-- Form đăng ký / hủy -->
+  <form method="POST" action="{% url 'toggle_event_registration' event.id %}" class="d-inline-block">
+    {% csrf_token %}
+    <button 
+      type="submit"
+      class="btn {% if is_registered %}btn-danger{% else %}btn-success{% endif %} px-5 py-3 fs-5 fw-semibold rounded-pill shadow-sm">
+      {% if is_registered %}❌ Hủy đăng ký{% else %}✅ Đăng ký{% endif %}
+    </button>
+  </form>
+
+  <!-- 🟢 Nút Check-in: chỉ hiển thị nếu đã đăng ký và sự kiện đang diễn ra -->
+  {% if is_registered and event.status == "in_progress" %}
+    {% if has_checked_in %}
+      <button class="btn btn-secondary px-5 py-3 fs-5 fw-semibold rounded-pill shadow-sm ms-2" disabled>
+        ✅ Đã điểm danh
+      </button>
+    {% else %}
+      <a href="{% url 'checkin_via_otp' %}" 
+         class="btn btn-outline-success px-5 py-3 fs-5 fw-semibold rounded-pill shadow-sm ms-2">
+        🎯 Check-in sự kiện
+      </a>
+    {% endif %}
+{% endif %}
+
+</div>
+
+<!-- 🎨 CSS -->
+<style>
+  .btn-back {
+    position: fixed;
+    top: 90px;
+    left: 25px;
+    background-color: #1e5631;
+    color: #fff;
+    border-radius: 50px;
+    padding: 10px 18px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    transition: 0.25s;
+    text-decoration: none;
+    z-index: 1000;
+  }
+  .btn-back:hover { background-color: #27ae60; transform: translateY(-2px); }
+  .event-banner { width: 100%; max-height: 420px; object-fit: cover; border-radius: 16px; }
+  .card { background: #f8fff5; }
+</style>
+
+<!-- 🕒 Đồng hồ đếm ngược -->
+{% if event.status == "upcoming" %}
+<script>
+  const startTime = new Date("{{ event.datetime_start|date:'Y-m-d H:i:s' }}").getTime();
+  const countdownEl = document.getElementById("countdown");
+
+  const countdown = setInterval(() => {
+    const now = new Date().getTime();
+    const distance = startTime - now;
+
+    if (distance <= 0) {
+      clearInterval(countdown);
+      countdownEl.textContent = "🟢 Sự kiện đang diễn ra!";
+      return;
+    }
+
+    const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((distance % (1000 * 60)) / 1000);
+    countdownEl.textContent = `⏳ Bắt đầu sau: ${h}h ${m}m ${s}s`;
+  }, 1000);
+</script>
+{% endif %}
+{% endblock main-content %}

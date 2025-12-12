@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+
+<h2 class="mb-3">📋 Danh sách báo cáo rác</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Địa chỉ</th>
+            <th>Ảnh</th>
+            <th>Trạng thái</th>
+            <th>Ngày gửi</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for report in reports %}
+        <tr>
+            <td>#{{ report.id }}</td>
+            <td>{{ report.user.username }}</td>
+            <td>{{ report.address }}</td>
+            <td><img src="{{ report.images.url }}" style="width:60px; border-radius:5px;"></td>
+            <td>
+                {% if report.admin_status == "pending" %}
+                    <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                {% elif report.admin_status == "approved" %}
+                    <span class="badge bg-success">Đã duyệt</span>
+                {% else %}
+                    <span class="badge bg-danger">Từ chối</span>
+                {% endif %}
+            </td>
+            <td>{{ report.created_at }}</td>
+
+            <td>
+                <a class="btn btn-sm btn-primary" href="{% url 'admin_verify_report' report.id %}">
+                    🔍 Xem / Duyệt
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

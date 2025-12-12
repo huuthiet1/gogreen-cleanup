@@ -1,0 +1,60 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>📜 Duyệt giấy chứng nhận</h1>
+
+<h2>⏳ Chờ duyệt</h2>
+{% if waiting %}
+<table class="admin-table">
+    <tr>
+        <th>ID</th>
+        <th>Người dùng</th>
+        <th>Sự kiện</th>
+        <th>File</th>
+        <th></th>
+    </tr>
+    {% for cert in waiting %}
+    <tr>
+        <td>{{ cert.id }}</td>
+        <td>{{ cert.user.username }}</td>
+        <td>{{ cert.event.title }}</td>
+        <td><a href="{{ cert.file.url }}" target="_blank">📄 Xem PDF</a></td>
+        <td>
+            <a class="button" href="{% url 'approve_certificate' cert.id %}">
+                ✔ Duyệt ngay
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Không có giấy chờ duyệt.</p>
+{% endif %}
+
+<hr>
+
+<h2>✅ Đã duyệt</h2>
+{% if approved %}
+<table class="admin-table">
+    <tr>
+        <th>ID</th>
+        <th>Người dùng</th>
+        <th>Sự kiện</th>
+        <th>File</th>
+        <th>Ngày duyệt</th>
+    </tr>
+    {% for cert in approved %}
+    <tr>
+        <td>{{ cert.id }}</td>
+        <td>{{ cert.user.username }}</td>
+        <td>{{ cert.event.title }}</td>
+        <td><a href="{{ cert.file.url }}" target="_blank">📄 Xem PDF</a></td>
+        <td>{{ cert.approved_at|date:"d/m/Y H:i" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Chưa có giấy nào được duyệt.</p>
+{% endif %}
+
+{% endblock %}

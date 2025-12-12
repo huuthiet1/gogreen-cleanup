@@ -1,0 +1,61 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+<h1 style="color: #198754;">📊 Danh sách báo cáo điểm rác</h1>
+
+<table class="table table-hover table-bordered mt-3">
+    <thead class="table-success">
+        <tr>
+            <th>ID</th>
+            <th>Người gửi</th>
+            <th>Ảnh</th>
+            <th>Loại rác</th>
+            <th>Khối lượng</th>
+            <th>Nhân lực</th>
+            <th>Trạng thái</th>
+            <th>Xem</th>
+            <th>Duyệt</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for r in reports %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.user.username }}</td>
+
+            <td>
+                <img src="{{ r.images.url }}" width="70" class="rounded">
+            </td>
+
+            <td>{{ r.predicted_trash_type }}</td>
+            <td>{{ r.estimated_weight_ton }} tấn</td>
+            <td>{{ r.recommended_volunteers }}</td>
+
+            <td>
+                {% if r.admin_status == "pending" %}
+                    <span class="badge bg-warning">⏳ Chờ duyệt</span>
+                {% else %}
+                    <span class="badge bg-success">✔ Đã duyệt</span>
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="/report/{{ r.id }}/" class="btn btn-sm btn-primary">👁 Xem</a>
+            </td>
+
+            <td>
+                {% if r.admin_status == "pending" %}
+                    <a href="/admin/report/verify/{{ r.id }}/"
+                       class="btn btn-success btn-sm">✔ Duyệt</a>
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

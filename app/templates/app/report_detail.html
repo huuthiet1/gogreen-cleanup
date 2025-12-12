@@ -1,0 +1,175 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4" style="max-width: 800px;">
+
+    <!-- ===== TIÊU ĐỀ ===== -->
+    <div class="mb-4">
+        <h2 class="fw-bold text-success">
+            📄 Chi tiết báo cáo điểm rác
+        </h2>
+        <p class="text-muted mb-0">
+            Gửi bởi <strong>{{ report.user.username }}</strong>
+            • {{ report.created_at|date:"d/m/Y H:i" }}
+        </p>
+    </div>
+
+    <!-- ===== TRẠNG THÁI ===== -->
+    <div class="alert
+        {% if report.admin_status == 'approved' %}
+            alert-success
+        {% elif report.admin_status == 'rejected' %}
+            alert-danger
+        {% else %}
+            alert-warning
+        {% endif %}
+    ">
+        <strong>Trạng thái:</strong>
+        {{ report.get_admin_status_display }}
+        {% if report.verified_at %}
+            • Duyệt lúc {{ report.verified_at|date:"d/m/Y H:i" }}
+        {% endif %}
+    </div>
+
+    <!-- ===== ẢNH ===== -->
+    {% if report.images %}
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">
+            📸 Hình ảnh điểm rác
+        </div>
+        <div class="card-body text-center">
+            <img
+                src="{{ report.images.url }}"
+                class="img-fluid rounded"
+                style="max-height: 420px;"
+            >
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ===== MÔ TẢ ===== -->
+    {% if report.description %}
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">
+            📝 Mô tả của người báo cáo
+        </div>
+        <div class="card-body">
+            {{ report.description|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ===== VỊ TRÍ ===== -->
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">
+            📍 Vị trí điểm rác
+        </div>
+        <div class="card-body">
+            {% if report.lat and report.lng %}
+                <p class="mb-2">
+                    Tọa độ:
+                    <strong>{{ report.lat }}, {{ report.lng }}</strong>
+                </p>
+                {% if report.address %}
+                    <p class="text-muted mb-2">
+                        {{ report.address }}
+                    </p>
+                {% endif %}
+
+                <div
+                    id="map"
+                    style="height:300px; border-radius:10px;"
+                    class="border"
+                ></div>
+            {% else %}
+                <p class="text-muted mb-0">
+                    Không có dữ liệu vị trí.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ===== KẾT QUẢ AI ===== -->
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">
+            🤖 Phân tích AI
+        </div>
+        <div class="card-body">
+            {% if report.analysis_summary %}
+                <p>{{ report.analysis_summary }}</p>
+
+                <ul class="mb-0">
+                    {% if report.predicted_trash_type %}
+                    <li>
+                        <strong>Loại rác chính:</strong>
+                        {{ report.get_predicted_trash_type_display }}
+                    </li>
+                    {% endif %}
+                    <li>
+                        <strong>Khối lượng ước tính:</strong>
+                        {{ report.estimated_weight_ton }} tấn
+                    </li>
+                    <li>
+                        <strong>Nhân lực đề xuất:</strong>
+                        {{ report.recommended_volunteers }} người
+                    </li>
+                </ul>
+            {% else %}
+                <p class="text-muted mb-0">
+                    AI chưa phân tích được dữ liệu.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ===== HÀNH ĐỘNG ADMIN ===== -->
+    {% if user.is_staff %}
+    <div class="d-flex gap-2">
+        {% if report.admin_status != 'approved' %}
+        <a
+            href="{% url 'admin_verify_report' report.id %}"
+            class="btn btn-success"
+            onclick="return confirm('Xác nhận duyệt báo cáo này?')"
+        >
+            ✔ Duyệt báo cáo
+        </a>
+        {% endif %}
+
+        <a href="{% url 'admin_report_list' %}" class="btn btn-secondary">
+            ← Quay lại danh sách
+        </a>
+    </div>
+    {% else %}
+    <a href="{% url 'home' %}" class="btn btn-secondary">
+        ← Quay lại
+    </a>
+    {% endif %}
+
+</div>
+
+<!-- ===== GOOGLE MAP ===== -->
+{% if report.lat and report.lng %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_KEY }}"></script>
+<script>
+    function initMap() {
+        const position = {
+            lat: {{ report.lat }},
+            lng: {{ report.lng }},
+        };
+
+        const map = new google.maps.Map(document.getElementById("map"), {
+            center: position,
+            zoom: 15,
+        });
+
+        new google.maps.Marker({
+            position: position,
+            map: map,
+        });
+    }
+
+    window.addEventListener("load", initMap);
+</script>
+{% endif %}
+{% endblock %}

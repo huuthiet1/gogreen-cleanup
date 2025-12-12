@@ -1,0 +1,48 @@
+/* =========================================
+   FULL WIDTH CHO TẤT CẢ DJANGO ADMIN + JAZZMIN
+========================================= */
+
+/* Phần nội dung chính chiếm toàn bộ chiều ngang */
+.content {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
+/* Wrapper của Jazzmin (loại bỏ shadow hẹp khung) */
+.content-wrapper {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+}
+
+/* Các form và listview co giãn full màn hình */
+.col-lg-10, .col-lg-9, .col-lg-8 {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Bảng dữ liệu full rộng */
+.table-responsive,
+table {
+    width: 100% !important;
+}
+
+/* Khoảng cách phần dashboard */
+.dashboard-wrapper {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
+}
+
+
+/* =========================================
+   RESPONSIVE (PC - TABLET - MOBILE)
+========================================= */
+
+@media (max-width: 768px) {
+    .content {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}

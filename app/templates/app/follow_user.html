@@ -1,0 +1,12 @@
+{% extends 'app/base.html' %}
+{% block main-content %}
+<div class="container py-5 text-center">
+  <h3 class="mb-3">Theo dõi người dùng 🌿</h3>
+  <form method="POST" action="{% url 'follow_user' %}">
+    {% csrf_token %}
+    <input type="text" name="user" placeholder="Nhập username cần theo dõi" class="form-control mb-3" required>
+    <button class="btn btn-success">Theo dõi / Bỏ theo dõi</button>
+  </form>
+  <a href="{% url 'social_home' %}" class="btn btn-outline-secondary mt-3">⬅ Quay lại</a>
+</div>
+{% endblock %}

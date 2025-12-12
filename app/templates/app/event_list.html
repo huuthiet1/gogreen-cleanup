@@ -1,0 +1,61 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4">
+  <h3 class="fw-bold text-success mb-4 text-center">🌿 Danh sách tất cả sự kiện</h3>
+
+  {% if events %}
+  <div class="row g-4">
+    {% for event in events %}
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0 rounded-4">
+        {% if event.event_images.all %}
+          <img src="{{ event.event_images.first.image.url }}" class="card-img-top rounded-top-4" alt="{{ event.title }}">
+        {% else %}
+          <img src="{% static 'app/images/default-event.jpg' %}" class="card-img-top rounded-top-4" alt="No image">
+        {% endif %}
+
+        <div class="card-body">
+          <h5 class="card-title text-success">{{ event.title }}</h5>
+          <p class="text-muted small mb-1">📍 {{ event.address|default:"Chưa cập nhật" }}</p>
+          <p class="text-muted small mb-1">🕓 {{ event.datetime_start|date:"d/m/Y H:i" }}</p>
+          <p class="card-text">{{ event.description|truncatechars:80 }}</p>
+
+          {% if event.status == "upcoming" %}
+            <span class="badge bg-warning text-dark">Sắp diễn ra</span>
+          {% elif event.status == "in_progress" %}
+            <span class="badge bg-success">Đang diễn ra</span>
+          {% else %}
+            <span class="badge bg-secondary">Đã kết thúc</span>
+          {% endif %}
+        </div>
+
+        <div class="card-footer bg-white border-0 text-center pb-3">
+          <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-success btn-sm px-4">Xem chi tiết</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-center text-muted">Hiện chưa có sự kiện nào.</p>
+  {% endif %}
+</div>
+{% endblock %}
+<style>
+/* Đảm bảo ảnh hiển thị đều nhau và không méo */
+.event-img-wrapper {
+  width: 100%;
+  height: 220px; /* hoặc 250px nếu muốn cao hơn */
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+.event-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Giữ tỉ lệ, cắt phần dư */
+  display: block;
+}
+</style>

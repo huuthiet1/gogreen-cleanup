@@ -1,0 +1,134 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4">
+    <h2 class="text-success fw-bold mb-3">📍 Gửi báo cáo điểm rác</h2>
+    <p class="text-muted">
+        Hãy cung cấp hình ảnh và vị trí thực tế để chúng tôi kiểm tra.
+    </p>
+
+    <form method="POST"
+          enctype="multipart/form-data"
+          class="card p-4 shadow-sm"
+          onsubmit="return validateForm()">
+        {% csrf_token %}
+
+        <!-- ẢNH -->
+        <label class="fw-semibold">📸 Hình ảnh điểm rác</label>
+        <input
+            type="file"
+            name="images"
+            accept="image/*"
+            required
+            class="form-control mt-2"
+            onchange="previewImage(this)"
+        >
+        <img
+            id="preview"
+            class="mt-3 d-none"
+            width="250"
+            style="border-radius:8px;"
+        >
+
+        <hr>
+
+        <!-- MÔ TẢ -->
+        <label class="fw-semibold">📝 Mô tả thêm</label>
+        <textarea
+            name="description"
+            class="form-control"
+            rows="3"
+            placeholder="Ví dụ: khu vực có mùi hôi..."
+        ></textarea>
+
+        <hr>
+
+        <!-- GOOGLE MAPS -->
+        <label class="fw-semibold">📌 Chọn vị trí trên bản đồ</label>
+        <div
+            id="map"
+            style="height:350px; border-radius:10px;"
+            class="mb-2 border"
+        ></div>
+
+        <small id="location-info" class="text-success d-none">
+            📍 Đã chọn vị trí
+        </small>
+
+        <!-- Hidden fields -->
+        <input type="hidden" id="lat" name="lat">
+        <input type="hidden" id="lng" name="lng">
+        <input type="hidden" id="address" name="address">
+
+        <button class="btn btn-success px-4 py-2 mt-3">
+            🚀 Gửi báo cáo
+        </button>
+    </form>
+</div>
+
+<!-- GOOGLE MAPS -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_KEY }}"></script>
+
+<script>
+    /* ========= PREVIEW IMAGE ========= */
+    function previewImage(input) {
+        const preview = document.getElementById("preview");
+        if (!input.files || !input.files[0]) return;
+
+        preview.src = URL.createObjectURL(input.files[0]);
+        preview.classList.remove("d-none");
+    }
+
+    /* ========= MAP ========= */
+    let map;
+    let marker = null;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 10.776, lng: 106.700 },
+            zoom: 13,
+        });
+
+        map.addListener("click", function (e) {
+            placeMarker(e.latLng);
+        });
+    }
+
+    function placeMarker(location) {
+        if (marker) marker.setMap(null);
+
+        marker = new google.maps.Marker({
+            position: location,
+            map: map,
+        });
+
+        document.getElementById("lat").value = location.lat();
+        document.getElementById("lng").value = location.lng();
+        document.getElementById("address").value =
+            "Lat " + location.lat().toFixed(6) +
+            ", Lng " + location.lng().toFixed(6);
+
+        const info = document.getElementById("location-info");
+        info.classList.remove("d-none");
+        info.textContent =
+            "📍 Đã chọn: " +
+            location.lat().toFixed(6) + ", " +
+            location.lng().toFixed(6);
+    }
+
+    /* ========= VALIDATE ========= */
+    function validateForm() {
+        const lat = document.getElementById("lat").value;
+        const lng = document.getElementById("lng").value;
+
+        if (!lat || !lng) {
+            alert("Vui lòng chọn vị trí điểm rác trên bản đồ.");
+            return false;
+        }
+        return true;
+    }
+
+    window.onload = initMap;
+</script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4" style="max-width: 1000px;">
+  <h2 class="text-success fw-bold text-center mb-4">🎁 Đổi quà từ điểm tích lũy</h2>
+
+  <div class="alert alert-light border shadow-sm text-center mb-4">
+    <h5>🌿 Điểm hiện tại của bạn: 
+      <span class="fw-bold text-success">{{ user.points }}</span> điểm
+    </h5>
+  </div>
+
+  <div class="row g-4">
+    {% for reward in rewards %}
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 rounded-4 h-100">
+     {% if reward.image %}
+  <img src="{{ reward.image.url }}" class="card-img-top rounded-top-4" style="height: 180px; object-fit: cover;">
+{% else %}
+  <img src="{% static 'app/images/default-gift.jpg' %}" class="card-img-top rounded-top-4" style="height: 180px; object-fit: cover;">
+{% endif %}
+
+        <div class="card-body text-center">
+          <h5 class="fw-bold text-success">{{ reward.title }}</h5>
+          <p class="text-muted small">{{ reward.description|default:"Không có mô tả." }}</p>
+          <p class="fw-semibold mb-1">🎯 {{ reward.required_points }} điểm</p>
+          <p class="small text-muted">Còn lại: {{ reward.stock }}</p>
+
+          {% if reward.stock > 0 %}
+            <form method="POST" action="{% url 'redeem_rewards' %}">
+              {% csrf_token %}
+              <input type="hidden" name="reward_id" value="{{ reward.id }}">
+              <div class="d-flex justify-content-center align-items-center gap-2 my-2">
+                <label for="quantity_{{ reward.id }}">Số lượng:</label>
+                <input type="number" id="quantity_{{ reward.id }}" name="quantity" min="1" max="{{ reward.stock }}" value="1"
+                       class="form-control form-control-sm text-center" style="width: 70px;">
+              </div>
+              <button type="submit" class="btn btn-success w-100 fw-semibold">🎁 Đổi quà</button>
+            </form>
+          {% else %}
+            <button class="btn btn-secondary w-100" disabled>Hết quà</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+      <p class="text-center text-muted">Không có phần thưởng nào khả dụng.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  body { background-color: #f5fff5; }
+  .card:hover { transform: translateY(-3px); transition: 0.25s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+</style>
+{% endblock %}

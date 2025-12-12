@@ -1,0 +1,35 @@
+{% extends "app/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-3">📸 Gửi báo cáo điểm rác</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Hình ảnh -->
+        <label class="form-label fw-bold">Hình ảnh rác *</label>
+        <input type="file" name="image" accept="image/*" required class="form-control mb-3">
+
+        <!-- Mô tả -->
+        <label class="form-label fw-bold">Mô tả (không bắt buộc)</label>
+        <textarea name="description" class="form-control mb-3" rows="3"></textarea>
+
+        <!-- GPS -->
+        <input type="hidden" name="lat" id="lat">
+        <input type="hidden" name="lng" id="lng">
+
+        <p class="text-muted">📍 Đang lấy vị trí của bạn...</p>
+
+        <button class="btn btn-success w-100">📬 Gửi báo cáo</button>
+    </form>
+</div>
+
+<script>
+navigator.geolocation.getCurrentPosition(function(pos) {
+    document.getElementById("lat").value = pos.coords.latitude;
+    document.getElementById("lng").value = pos.coords.longitude;
+});
+</script>
+
+{% endblock %}

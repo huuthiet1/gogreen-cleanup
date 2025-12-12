@@ -1,0 +1,43 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block main-content %}
+
+<div class="container py-5" style="max-width: 600px;">
+  <h3 class="text-center text-success fw-bold mb-4">📝 Đăng ký tài khoản</h3>
+
+  <form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm border-0 rounded-4">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Tên đăng nhập</label>
+      <input type="text" name="username" class="form-control" placeholder="Nhập tên đăng nhập" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" class="form-control" placeholder="Nhập email" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Số điện thoại</label>
+      <input type="text" name="phone" class="form-control" placeholder="Nhập số điện thoại">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Mật khẩu</label>
+      <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Xác nhận mật khẩu</label>
+      <input type="password" name="confirm_password" class="form-control" placeholder="Nhập lại mật khẩu" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Ảnh đại diện (Avatar)</label>
+      <input type="file" name="avatar" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">Đăng ký</button>
+  </form>
+
+  <p class="text-center mt-3">
+    Đã có tài khoản? <a href="{% url 'login' %}" class="text-success fw-bold">Đăng nhập ngay</a>
+  </p>
+</div>
+
+{% endblock %}

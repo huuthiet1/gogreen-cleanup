@@ -1,0 +1,22 @@
+{% extends 'app/base.html' %}
+{% block main-content %}
+<div class="container py-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="mb-3">🖼 Đăng bài mới</h5>
+      <form method="POST" enctype="multipart/form-data" action="{% url 'upload_post' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <textarea name="caption" class="form-control" placeholder="Viết cảm nghĩ của bạn..."></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="image_upload" class="form-label">Chọn ảnh</label>
+          <input type="file" name="image_upload" class="form-control" accept="image/*">
+        </div>
+        <button type="submit" class="btn btn-success">Đăng bài</button>
+        <a href="{% url 'social_home' %}" class="btn btn-outline-secondary">Hủy</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

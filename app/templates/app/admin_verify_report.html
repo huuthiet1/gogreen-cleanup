@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+
+<h2 class="mb-3">🔎 Kiểm tra & duyệt báo cáo #{{ report.id }}</h2>
+
+<div class="card p-3 shadow-sm">
+
+    <img src="{{ report.images.url }}" class="img-fluid rounded mb-3" style="max-height:300px;">
+
+    <p><strong>User:</strong> {{ report.user.username }}</p>
+    <p><strong>Mô tả:</strong> {{ report.description }}</p>
+    <p><strong>Địa chỉ:</strong> {{ report.address }}</p>
+    <p><strong>Phát hiện:</strong> {{ report.predicted_trash_type }}</p>
+    <p><strong>Tấn rác:</strong> {{ report.estimated_weight_ton }}</p>
+
+    <hr>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label class="fw-bold mb-1">📌 Địa điểm kiểm tra thực tế:</label>
+        <input type="text" name="admin_location" class="form-control mb-3" required
+               placeholder="VD: 123 Nguyễn Văn Cừ, P.2, Q.5">
+
+        <button class="btn btn-success w-100">✔ Xác nhận & duyệt báo cáo</button>
+    </form>
+</div>
+
+{% endblock %}

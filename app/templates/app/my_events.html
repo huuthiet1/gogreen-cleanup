@@ -1,0 +1,61 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4">
+
+  <h3 class="fw-bold text-success mb-4 text-center">🎯 Sự kiện của bạn</h3>
+
+  <!-- Sự kiện bạn đã đăng ký -->
+  <div class="mb-5">
+    <h5 class="text-success fw-semibold mb-3">🔥 Sự kiện bạn đã đăng ký</h5>
+    {% if registered_events %}
+      <div class="row g-4">
+        {% for event in registered_events %}
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0 h-100 rounded-4">
+            {% if event.event_images.all %}
+              <img src="{{ event.event_images.first.image.url }}" class="card-img-top rounded-top-4" alt="{{ event.title }}">
+            {% else %}
+              <img src="{% static 'app/images/default-event.jpg' %}" class="card-img-top rounded-top-4" alt="No image">
+            {% endif %}
+            <div class="card-body">
+              <h6 class="fw-bold text-success">{{ event.title }}</h6>
+              <p class="small text-muted mb-1">📍 {{ event.address }}</p>
+              <p class="small text-muted">🕓 {{ event.datetime_start|date:"d/m/Y H:i" }}</p>
+              <span class="badge bg-warning text-dark">{{ event.get_status_display }}</span>
+            </div>
+            <div class="card-footer bg-white border-0 text-center pb-3">
+              <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-success btn-sm px-3">Xem chi tiết</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted">Bạn chưa đăng ký sự kiện nào.</p>
+    {% endif %}
+  </div>
+
+  <!-- Lịch sử sự kiện đã tham gia -->
+  <div>
+    <h5 class="text-secondary fw-semibold mb-3">✅ Lịch sử sự kiện đã tham gia</h5>
+    {% if completed_events %}
+      <ul class="list-group">
+        {% for event in completed_events %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+              <strong>{{ event.title }}</strong>  
+              <small class="text-muted">({{ event.datetime_start|date:"d/m/Y" }})</small>
+            </span>
+            <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-outline-secondary">Xem lại</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted">Bạn chưa tham gia sự kiện nào đã kết thúc.</p>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

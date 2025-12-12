@@ -1,0 +1,346 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+
+    /* ================================================
+       🌿 RESET JAZZMIN – LÀM FULL 100%
+    ================================================= */
+    .content-wrapper,
+    .content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        background: #f3f8f4 !important; /* Màu nền xanh lá siêu nhẹ */
+    }
+
+    /* ================================================
+       🌿 CONTAINER DASHBOARD
+    ================================================= */
+    .dashboard-container {
+        padding: 40px;
+        max-width: 1400px;
+        margin: auto;
+    }
+
+    /* ================================================
+       🌿 HEADER HOÀNH TRÁNG
+    ================================================= */
+    .dashboard-header {
+        background: linear-gradient(135deg, #0db65c, #0a8e48);
+        padding: 35px 30px;
+        border-radius: 18px;
+        color: white;
+        margin-bottom: 35px;
+        box-shadow: 0 5px 20px rgba(0, 128, 0, 0.25);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .header-sub {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-top: 8px;
+    }
+
+    .btn-home {
+        background: white;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: bold;
+        color: #067b38 !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        transition: 0.25s;
+    }
+
+    .btn-home:hover {
+        background: #dafbe8;
+        transform: translateY(-3px);
+    }
+
+    /* ================================================
+       🌿 GROUP TITLE
+    ================================================= */
+    .group-title {
+        font-size: 22px;
+        margin-top: 40px;
+        margin-bottom: 15px;
+        font-weight: 700;
+        color: #0d6b3a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* ================================================
+       🌿 CARD GRID
+    ================================================= */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 22px;
+    }
+
+    /* ================================================
+       🌿 CARD XANH LÁ CAO CẤP
+    ================================================= */
+    .card-box {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+        border: 2px solid transparent;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-box:hover {
+        border-color: #12a84f;
+        transform: translateY(-6px);
+        box-shadow: 0 7px 20px rgba(0,158,77,0.18);
+    }
+
+    .card-box i {
+        font-size: 42px;
+        color: #0aa84a;
+        margin-bottom: 12px;
+    }
+
+    .card-box h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #146b3a;
+        margin: 0;
+    }
+
+    /* ================================================
+        🌿 RESPONSIVE
+    ================================================= */
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 20px;
+        }
+        .card-grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        }
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <!-- ======================================================
+         🌿 HEADER HOÀNH TRÁNG – XANH LÁ CÂY CAO CẤP
+    ========================================================= -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Quản Trị Hệ Thống Go Green 🌱</h1>
+            <div class="header-sub">Nơi điều hành toàn bộ hoạt động – Tối ưu – Nhanh – Thông minh</div>
+        </div>
+
+        <a href="/" class="btn-home">
+            <i class="fas fa-home"></i> Trang chủ
+        </a>
+    </div>
+
+
+    <!-- ======================================================
+         🌿 NHÓM: SỰ KIỆN
+    ========================================================= -->
+    <div class="group-title">
+        <i class="fas fa-calendar-check"></i> Quản lý sự kiện
+    </div>
+
+    <div class="card-grid">
+
+        <div onclick="location.href='/admin/app/event/'" class="card-box">
+            <i class="fas fa-calendar-check"></i>
+            <h3>Sự kiện</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/eventimage/'" class="card-box">
+            <i class="fas fa-image"></i>
+            <h3>Ảnh sự kiện</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/eventparticipation/'" class="card-box">
+            <i class="fas fa-user-check"></i>
+            <h3>Tham gia</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/eventcomment/'" class="card-box">
+            <i class="fas fa-comments"></i>
+            <h3>Bình luận</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/checkin/'" class="card-box">
+            <i class="fas fa-qrcode"></i>
+            <h3>Điểm danh</h3>
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         🌿 NHÓM: NGƯỜI DÙNG
+    ========================================================= -->
+    <div class="group-title">
+        <i class="fas fa-users"></i> Người dùng & Tình nguyện viên
+    </div>
+
+    <div class="card-grid">
+
+        <div onclick="location.href='/admin/app/user/'" class="card-box">
+            <i class="fas fa-user"></i>
+            <h3>Người dùng</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/profile/'" class="card-box">
+            <i class="fas fa-id-card"></i>
+            <h3>Hồ sơ</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/userbadge/'" class="card-box">
+            <i class="fas fa-award"></i>
+            <h3>Huy hiệu</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/participationcertificate/'" class="card-box">
+            <i class="fas fa-certificate"></i>
+            <h3>Chứng nhận</h3>
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         🌿 NHÓM: MẠNG XÃ HỘI
+    ========================================================= -->
+    <div class="group-title">
+        <i class="fas fa-hashtag"></i> Mạng xã hội
+    </div>
+
+    <div class="card-grid">
+
+        <div onclick="location.href='/admin/app/post/'" class="card-box">
+            <i class="fas fa-pencil-alt"></i>
+            <h3>Bài đăng</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/likepost/'" class="card-box">
+            <i class="fas fa-heart"></i>
+            <h3>Lượt thích</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/followers/'" class="card-box">
+            <i class="fas fa-user-friends"></i>
+            <h3>Theo dõi</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/comment/'" class="card-box">
+            <i class="fas fa-comments"></i>
+            <h3>Bình luận</h3>
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         🌿 NHÓM: QUÀ & ĐIỂM
+    ========================================================= -->
+    <div class="group-title">
+        <i class="fas fa-gift"></i> Điểm thưởng & Quà tặng
+    </div>
+
+    <div class="card-grid">
+
+        <div onclick="location.href='/admin/app/reward/'" class="card-box">
+            <i class="fas fa-gift"></i>
+            <h3>Quà</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/rewardredeem/'" class="card-box">
+            <i class="fas fa-box-open"></i>
+            <h3>Đổi thưởng</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/score/'" class="card-box">
+            <i class="fas fa-star"></i>
+            <h3>Điểm</h3>
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         🌿 NHÓM: RÁC & AI
+    ========================================================= -->
+    <div class="group-title">
+        <i class="fas fa-recycle"></i> Rác & AI
+    </div>
+
+    <div class="card-grid">
+
+        <div onclick="location.href='/admin/app/report/'" class="card-box">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>Báo cáo rác</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/trashcategory/'" class="card-box">
+            <i class="fas fa-trash"></i>
+            <h3>Danh mục rác</h3>
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         🌿 NHÓM: HỆ THỐNG
+    ========================================================= -->
+    <div class="group-title">
+        <i class="fas fa-cogs"></i> Hệ thống
+    </div>
+
+    <div class="card-grid">
+
+        <div onclick="location.href='/admin/app/notification/'" class="card-box">
+            <i class="fas fa-bell"></i>
+            <h3>Thông báo</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/activitylog/'" class="card-box">
+            <i class="fas fa-history"></i>
+            <h3>Lịch sử hoạt động</h3>
+        </div>
+
+        <div onclick="location.href='/admin/app/message/'" class="card-box">
+            <i class="fas fa-paper-plane"></i>
+            <h3>Tin nhắn</h3>
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock %}

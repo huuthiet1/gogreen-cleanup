@@ -1,0 +1,58 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow border-0 rounded-4 p-4">
+        <h4 class="fw-bold text-center text-success mb-4">Chỉnh sửa hồ sơ</h4>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div class="text-center mb-3">
+            {% if user.avatar %}
+              <img src="{{ user.avatar.url }}" class="rounded-circle border border-success" alt="Avatar" width="120" height="120">
+            {% else %}
+              <img src="{% static 'app/images/default-avatar.png' %}" class="rounded-circle border border-success" alt="Default Avatar" width="120" height="120">
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Ảnh đại diện</label>
+            {{ form.avatar }}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Họ</label>
+              {{ form.last_name }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Tên</label>
+              {{ form.first_name }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Email</label>
+            {{ form.email }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Số điện thoại</label>
+            {{ form.phone }}
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">← Quay lại</a>
+            <button type="submit" class="btn btn-success px-4">💾 Lưu thay đổi</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

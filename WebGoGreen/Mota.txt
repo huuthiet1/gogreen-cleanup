@@ -1,0 +1,26 @@
+# 🌱 GoGreen Cleanup
+
+Hệ thống web hỗ trợ cộng đồng báo cáo điểm rác, phân tích bằng AI và tổ chức dọn dẹp môi trường.
+
+## 🚀 Tính năng
+- Đăng nhập Google (django-allauth)
+- Báo cáo điểm rác kèm hình ảnh
+- AI phân tích loại rác & ước lượng nhân lực
+- Quản lý sự kiện dọn dẹp
+- Hệ thống điểm thưởng & quà
+- Admin duyệt báo cáo
+
+## 🛠 Công nghệ
+- Django 5.x
+- MySQL
+- Google OAuth
+- OpenAI Vision (AI phân tích hình ảnh)
+- Bootstrap / Jazzmin Admin
+
+## ▶️ Chạy project
+```bash
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver

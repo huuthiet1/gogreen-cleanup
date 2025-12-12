@@ -1,0 +1,70 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block main-content %}
+
+<div class="container py-5" style="max-width: 500px;">
+
+  <div class="card shadow border-0 rounded-4 p-4">
+
+    <h3 class="text-center fw-bold mb-3" style="color:#0d6efd;">
+      ✨ Hoàn tất đăng ký
+    </h3>
+
+    <p class="text-center text-muted mb-4">
+      Bạn đang đăng ký bằng tài khoản Google.<br>
+      Vui lòng hoàn tất thông tin bên dưới.
+    </p>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <!-- Email -->
+      {% if form.email %}
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Email</label>
+        <input 
+          type="email" 
+          name="{{ form.email.name }}" 
+          value="{{ form.email.value|default:'' }}" 
+          class="form-control rounded-3"
+          placeholder="Nhập email"
+        >
+        {% if form.email.errors %}
+          <div class="text-danger small">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Username -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Tên đăng nhập</label>
+        <input 
+          type="text" 
+          name="{{ form.username.name }}" 
+          value="{{ form.username.value|default:'' }}" 
+          class="form-control rounded-3"
+          placeholder="Nhập tên đăng nhập"
+        >
+        {% if form.username.errors %}
+          <div class="text-danger small">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+
+      <button class="btn btn-primary w-100 py-2 fw-semibold rounded-3">
+        ✔ Hoàn tất đăng ký
+      </button>
+
+    </form>
+
+  </div>
+
+  <p class="text-center mt-3">
+    <a href="{% url 'account_login' %}" class="text-decoration-none">
+      🔙 Quay lại đăng nhập
+    </a>
+  </p>
+
+</div>
+
+{% endblock %}

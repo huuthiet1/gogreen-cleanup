@@ -1,0 +1,34 @@
+{% extends 'app/base.html' %}
+{% block main-content %}
+<div class="container py-4">
+  <div class="card shadow-sm p-4" style="max-width:600px; margin:auto;">
+    <h5 class="text-success mb-3">✏️ Sửa bình luận</h5>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Nội dung:</label>
+        <textarea name="content" class="form-control" rows="3">{{ comment.content }}</textarea>
+      </div>
+
+      {% if comment.image %}
+      <div class="mb-3">
+        <label class="form-label text-muted">Ảnh hiện tại:</label><br>
+        <img src="{{ comment.image.url }}" alt="Ảnh bình luận" class="rounded shadow-sm" 
+             style="max-width: 250px; border: 1px solid #d8f3dc; border-radius: 10px;">
+      </div>
+      {% endif %}
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Chọn ảnh mới (nếu muốn thay):</label>
+        <input type="file" name="image" accept="image/*" class="form-control">
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'social_home' %}" class="btn btn-secondary">⬅ Quay lại</a>
+        <button type="submit" class="btn btn-success">💾 Lưu thay đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

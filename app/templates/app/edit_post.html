@@ -1,0 +1,30 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4">
+  <div class="card shadow-sm p-4">
+    <h4 class="text-success mb-4">✏️ Chỉnh sửa bài viết</h4>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Nội dung</label>
+        <textarea name="caption" class="form-control" rows="3">{{ post.caption }}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Ảnh hiện tại</label><br>
+        <img src="{{ post.image.url }}" class="rounded mb-2" width="300">
+        <input type="file" name="image_upload" class="form-control mt-2">
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'social_home' %}" class="btn btn-secondary">⬅ Quay lại</a>
+        <button type="submit" class="btn btn-success">💾 Lưu thay đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

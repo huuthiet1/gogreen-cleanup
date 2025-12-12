@@ -1,0 +1,315 @@
+{% extends 'app/base.html' %}
+{% load static %}
+<script type="module" src="{% static 'js/firebase.js' %}"></script>
+{% block banner-slider %}
+<!-- ===== HERO / BANNER ===== -->
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+  </div>
+
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="{% static 'app/images/n1.jpg' %}" class="d-block w-100 hero-img" alt="GoGreen Banner 1">
+      <div class="carousel-caption caption-box">
+        <h2>🌿 Chung tay cùng GoGreen Cleanup</h2>
+        <p>Cộng đồng xanh — Hành động vì Trái Đất!</p>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <img src="{% static 'app/images/n4.jpg' %}" class="d-block w-100 hero-img" alt="GoGreen Banner 2">
+      <div class="carousel-caption caption-box">
+        <h2>🌱 Hành động nhỏ – Thay đổi lớn</h2>
+        <p>Hãy là một phần của phong trào sống xanh!</p>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <img src="{% static 'app/images/n3.jpg' %}" class="d-block w-100 hero-img" alt="GoGreen Banner 3">
+      <div class="carousel-caption caption-box">
+        <h2>🌎 Vì tương lai xanh hơn</h2>
+        <p>Tham gia sự kiện và nhận điểm thưởng ngay hôm nay!</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+</div>
+
+<style>
+.hero-img {
+  height: clamp(360px, 50vw, 600px);
+  object-fit: cover;
+  filter: brightness(0.85);
+}
+.caption-box {
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 12px;
+  padding: 15px 20px;
+}
+.caption-box h2 { font-size: 2rem; color: #fff; font-weight: 700; }
+.caption-box p { font-size: 1.1rem; color: #d8f3dc; }
+</style>
+{% endblock banner-slider %}
+
+{% block main-content %}
+
+<section class="event-section my-5 text-center">
+  <h3 class="fw-bold text-success mb-3">🗓️ Sự kiện trong tuần này</h3>
+  <p class="text-muted mb-4">Tham gia và nhận điểm xanh thưởng 🌿</p>
+
+  <div class="row g-4 justify-content-center">
+    {% for e in events %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="event-card p-3 shadow-sm text-start">
+        <div class="d-flex align-items-center mb-2">
+          <img src="{% static 'app/images/logo.jpg' %}" alt="Logo" class="event-logo me-2">
+          <div>
+            <h5 class="fw-bold text-white mb-0 text-uppercase" style="font-size: 1rem;">
+              {{ e.title|truncatechars:20 }}
+            </h5>
+            <p class="small text-light mb-0">
+             
+             🍃 {{ e.points|floatformat:0 }} Điểm
+            </p>
+          </div>
+        </div>
+
+        <div class="event-info mt-2">
+          <div class="event-time mb-2">
+            <span>🕒 {{ e.datetime_start|date:"H:i A" }} - {{ e.datetime_end|date:"H:i A" }}</span>
+          </div>
+
+          <div class="event-location mb-2">
+            📍 {{ e.address }}
+          </div>
+
+          <div class="progress rounded-pill bg-light" style="height: 10px;">
+            {% with percent=e.participants_current|divisibleby:e.participants_max %}
+            <div class="progress-bar bg-success" 
+                 style="width: {{ e.participants_current|divisibleby:e.participants_max|floatformat:0 }}%;"></div>
+            {% endwith %}
+          </div>
+
+          <p class="small mt-1 text-light text-end">
+            {{ e.participants_current }}/{{ e.participants_max }} người
+          </p>
+
+       <div class="text-center mt-3 d-flex justify-content-center gap-2">
+  <!-- Nút xem chi tiết -->
+  <a href="{% url 'event_detail' e.id %}" 
+     class="btn btn-light btn-sm fw-bold px-4 rounded-pill shadow-sm">
+    Xem chi tiết
+  </a>
+
+  <!-- Nút đăng ký / hủy nhanh giống event_detail -->
+<form method="POST" action="{% url 'quick_register' e.id %}" class="d-inline-block">
+  {% csrf_token %}
+
+  {% if user.is_authenticated and e.id in participated_event_ids %}
+    <button 
+      type="submit"
+      class="btn btn-danger btn-sm fw-bold px-4 rounded-pill shadow-sm">
+      ❌ Hủy đăng ký
+    </button>
+  {% else %}
+    <button 
+      type="submit"
+      class="btn btn-success btn-sm fw-bold px-4 rounded-pill shadow-sm">
+      ✔️ Đăng ký
+    </button>
+  {% endif %}
+</form>
+
+
+
+
+</div>
+
+
+
+
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-light">Hiện chưa có sự kiện nào 🌱</p>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+.event-section {
+  background: #509c50ff;
+  padding: 2rem 0;
+}
+.event-card {
+  background-color: #1f7c30ff;
+  border-radius: 22px;
+  color: white;
+  transition: all 0.3s ease-in-out;
+}
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+.event-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: white;
+  padding: 5px;
+}
+.event-info span {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+.event-location {
+  background-color: rgba(255, 255, 255, 0.72);
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+.progress {
+  height: 8px;
+  margin-top: 8px;
+}
+</style>
+
+
+<!-- 🌍 SỐ LIỆU TỔNG QUAN -->
+<section class="about-stats py-5 text-center">
+  <div class="container">
+    <h3 class="fw-bold text-success mb-4">🌏 Cộng đồng GoGreen — Hành động thật, hiệu quả thật!</h3>
+    <p class="text-muted mb-5">Mỗi hành động của bạn là một đóng góp cho Trái Đất xanh hơn 💚</p>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="icon">🌿</div>
+          <h4 class="fw-bold counter" data-target="12500">0</h4>
+          <p>Điểm xanh đã quy đổi</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="icon">🗑️</div>
+          <h4 class="fw-bold counter" data-target="4800">0</h4>
+          <p>Kg rác đã thu gom</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="icon">🤝</div>
+          <h4 class="fw-bold counter" data-target="250">0</h4>
+          <p>Tình nguyện viên</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="icon">📅</div>
+          <h4 class="fw-bold counter" data-target="36">0</h4>
+          <p>Sự kiện đã tổ chức</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.about-stats {
+  background: linear-gradient(180deg, #f6fff8, #e9f7ee);
+  border-top: 2px solid #b6e29a;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease;
+}
+.stat-card:hover { transform: translateY(-6px); }
+.icon { font-size: 2.2rem; }
+.counter { color: #198754; font-size: 1.8rem; font-weight: 700; }
+</style>
+
+<!-- 🏆 BẢNG XẾP HẠNG -->
+<section class="leaderboard py-5 text-center">
+  <div class="container">
+    <h3 class="fw-bold text-success mb-4">🏆 Bảng xếp hạng tình nguyện viên</h3>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle shadow-sm">
+        <thead class="table-success">
+          <tr>
+            <th>Hạng</th>
+            <th>Người dùng</th>
+            <th>Điểm xanh</th>
+            <th>Số sự kiện</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in top_users %}
+          <tr>
+            <td>🥇 {{ forloop.counter }}</td>
+            <td class="text-start">
+              {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="rounded-circle me-2" width="35" height="35">
+              {% else %}
+                <img src="{% static 'app/images/default-avatar.png' %}" class="rounded-circle me-2" width="35" height="35">
+              {% endif %}
+              {{ user.username }}
+            </td>
+            <td><strong>{{ user.points }}</strong></td>
+            <td>{{ user.event_count }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4">Chưa có dữ liệu bảng xếp hạng 🌱</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+.leaderboard {
+  background: #f3fff5;
+  border-top: 2px solid #b6e29a;
+}
+.table th { color: #155d27; font-weight: 600; }
+.table td { color: #2b2b2b; }
+</style>
+
+<!-- 💫 Hiệu ứng đếm số -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const counters = document.querySelectorAll(".counter");
+  counters.forEach(counter => {
+    const update = () => {
+      const target = +counter.dataset.target;
+      const c = +counter.innerText;
+      const increment = target / 60;
+      if (c < target) {
+        counter.innerText = Math.ceil(c + increment);
+        setTimeout(update, 20);
+      } else {
+        counter.innerText = target.toLocaleString();
+      }
+    };
+    update();
+  });
+});
+</script>
+
+{% endblock main-content %}

@@ -1,0 +1,90 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4" style="max-width: 900px;">
+  <h2 class="text-success fw-bold text-center mb-4">🎁 Lịch sử đổi quà của tôi</h2>
+
+  {% if history %}
+    <div class="table-responsive shadow-sm rounded-4 overflow-hidden">
+      <table class="table align-middle mb-0">
+        <thead class="table-success text-center">
+          <tr>
+            <th>#</th>
+            <th>Phần thưởng</th>
+            <th>Điểm đã dùng</th>
+            <th>Số lượng</th>
+            <th>Trạng thái</th>
+            <th>Ngày đổi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in history %}
+          <tr class="text-center">
+            <td>{{ forloop.counter }}</td>
+            <td class="text-start d-flex align-items-center justify-content-start ps-4">
+              {% if item.reward.image %}
+                <img src="{{ item.reward.image.url }}" alt="{{ item.reward.title }}" 
+                     width="55" height="55" class="rounded border me-3" style="object-fit: cover;">
+              {% else %}
+                <img src="{% static 'app/images/default-gift.jpg' %}" alt="No image" 
+                     width="55" height="55" class="rounded border me-3" style="object-fit: cover;">
+              {% endif %}
+              <strong class="text-success">{{ item.reward.title }}</strong>
+            </td>
+
+            <td class="text-danger fw-semibold">-{{ item.points_spent }}</td>
+            <td>{{ item.quantity }}</td>
+
+            <td>
+              {% if item.status == "approved" %}
+                <span class="badge bg-success px-3 py-2">✅ Đã duyệt</span>
+              {% elif item.status == "pending" %}
+                <span class="badge bg-warning text-dark px-3 py-2">⏳ Chờ duyệt</span>
+              {% elif item.status == "rejected" %}
+                <span class="badge bg-danger px-3 py-2">❌ Từ chối</span>
+              {% elif item.status == "delivered" %}
+                <span class="badge bg-primary px-3 py-2">📦 Đã giao</span>
+              {% else %}
+                <span class="badge bg-secondary px-3 py-2">Không xác định</span>
+              {% endif %}
+            </td>
+
+            <td>{{ item.redeem_date|date:"d/m/Y H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-light border text-center py-5 rounded-4 shadow-sm">
+      <p class="text-muted mb-0 fs-5">😔 Bạn chưa đổi phần thưởng nào.</p>
+      <a href="{% url 'redeem_rewards' %}" class="btn btn-success mt-3 px-4 py-2 fw-semibold rounded-pill">
+        🎁 Đổi quà ngay
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  body {
+    background-color: #f5fff5;
+  }
+  table th, table td {
+    vertical-align: middle;
+  }
+  .table-success {
+    background-color: #e9f9e9 !important;
+  }
+  tr:hover {
+    background-color: #f0fff0;
+    transition: 0.2s;
+  }
+  .badge {
+    font-size: 0.9rem;
+  }
+  .alert-light {
+    background-color: #ffffff;
+  }
+</style>
+{% endblock %}

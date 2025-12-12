@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác nhận đổi quà thành công - Go Green Clean Up</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f6fdf6; color: #333; padding: 20px;">
+    <table align="center" width="600" cellpadding="0" cellspacing="0" style="background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden;">
+        <tr>
+            <td style="background-color: #2e7d32; color: #fff; text-align: center; padding: 20px;">
+                <h2 style="margin: 0;">🎁 Go Green Clean Up</h2>
+                <p style="margin: 5px 0;">Xác nhận đổi quà thành công</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 25px;">
+                <p>Chào <strong>{{ user.username }}</strong>,</p>
+
+                <p>Bạn vừa đổi thành công <strong>{{ quantity }}</strong> phần quà 
+                <strong>"{{ reward.title }}"</strong>.</p>
+
+                <ul style="background-color:#f0f9f0; border-left: 4px solid #4caf50; padding: 10px 20px; list-style:none;">
+                    <li><strong>🎯 Điểm đã sử dụng:</strong> {{ total_cost }} điểm</li>
+                    <li><strong>📦 Số lượng:</strong> {{ quantity }}</li>
+                    <li><strong>📅 Thời gian:</strong> {{ redeem_time }}</li>
+                    <li><strong>✅ Trạng thái:</strong> Đã duyệt</li>
+                </ul>
+
+                <p style="margin-top: 20px;">
+                    Cảm ơn bạn đã tích cực tham gia hoạt động môi trường cùng <strong>Go Green Clean Up</strong>!  
+                    Hãy tiếp tục thu thập “điểm xanh” để nhận thêm nhiều phần quà hấp dẫn nhé 🌱
+                </p>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <a href="https://gogreencleanup.vn/rewards" 
+                       style="background-color:#43a047; color:white; text-decoration:none; padding:12px 24px; border-radius:6px;">
+                       Xem lịch sử đổi quà
+                    </a>
+                </div>
+
+                <p style="margin-top: 25px; font-size: 13px; color:#666;">
+                    --<br>Đội ngũ <strong>Go Green Clean Up 🌍</strong><br>
+                    Email tự động, vui lòng không trả lời thư này.
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

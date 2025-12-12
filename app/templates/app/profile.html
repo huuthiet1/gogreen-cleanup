@@ -1,0 +1,50 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block profile-content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body text-center">
+
+          <!-- Ảnh đại diện -->
+          <div class="mb-3">
+            {% if user.avatar %}
+              <img src="{{ user.avatar.url }}" class="rounded-circle" alt="Avatar" width="120" height="120">
+            {% else %}
+              <img src="{% static 'app/images/default-avatar.png' %}" class="rounded-circle" alt="Default Avatar" width="120" height="120">
+            {% endif %}
+          </div>
+
+          <!-- Thông tin người dùng -->
+          <h4 class="fw-bold text-success">{{ user.username }}</h4>
+          <p class="text-muted">{{ user.email }}</p>
+
+          <div class="row mt-4 text-start">
+            <div class="col-md-6">
+              <p><strong>📞 Số điện thoại:</strong> {{ user.phone|default:"Chưa cập nhật" }}</p>
+              <p><strong>🎖 Vai trò:</strong> {{ user.get_role_display }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>💚 Điểm tích lũy:</strong> {{ user.points }}</p>
+              <p><strong>📅 Ngày tham gia:</strong> {{ user.date_joined|date:"d/m/Y" }}</p>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Nút chỉnh sửa -->
+          <a href="{% url 'profile_edit' %}" class="btn btn-outline-success btn-sm px-4 mt-2">Chỉnh sửa hồ sơ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.card img {
+  object-fit: cover;
+}
+</style>
+{% endblock %}
