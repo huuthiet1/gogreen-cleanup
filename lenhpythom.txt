@@ -1,0 +1,20 @@
+django-admin startproject abc
+django-admin startapp app
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+cd WebGoGreen
+python manage.py runserver
+pyinstaller --onefile -w --icon=dinosaur.ico dino.py
+pyuic6 -x v.ui -o v.py
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
+        "OPTIONS": {"charset": "utf8mb4"},
+    }
+}

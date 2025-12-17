@@ -1,0 +1,131 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-4">
+  <div class="chat-container mx-auto shadow rounded" style="max-width:650px">
+
+    <!-- HEADER -->
+    <div class="chat-header bg-success text-white p-3 rounded-top text-center">
+      <b>GoGreen Bot 🌿</b>
+    </div>
+
+    <!-- CHAT BODY -->
+    <div class="chat-body p-3" id="chatBox">
+      {% for msg in messages %}
+        {% if msg.is_from_bot %}
+          <div class="d-flex mb-3">
+            <img src="{% static 'app/images/logo.jpg' %}" class="chat-avatar me-2">
+            <div class="chat-bubble bot-msg">{{ msg.content|safe }}</div>
+          </div>
+        {% else %}
+          <div class="d-flex justify-content-end mb-3">
+            <div class="chat-bubble user-msg">{{ msg.content }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- SUGGESTIONS -->
+    <div class="chat-suggestions p-3 text-center" id="suggestionBox">
+      {% for s in suggestions %}
+        <button class="btn btn-outline-success btn-sm m-1 suggestion-btn">
+          {{ s }}
+        </button>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+const chatBox = document.getElementById("chatBox");
+const suggestionBox = document.getElementById("suggestionBox");
+
+function bindButtons(){
+  document.querySelectorAll(".suggestion-btn").forEach(btn=>{
+    btn.onclick = async ()=>{
+      const msg = btn.innerText;
+      btn.disabled = true;
+
+      // USER MESSAGE
+      chatBox.innerHTML += `
+        <div class="d-flex justify-content-end mb-3">
+          <div class="chat-bubble user-msg">${msg}</div>
+        </div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // BOT TYPING
+      const typing = document.createElement("div");
+      typing.className = "d-flex mb-3";
+      typing.innerHTML = `
+        <img src="{% static 'app/images/logo.jpg' %}" class="chat-avatar me-2">
+        <div class="chat-bubble bot-msg"><i>GoGreen Bot đang phản hồi...</i></div>
+      `;
+      chatBox.appendChild(typing);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // SEND
+      const res = await fetch("{% url 'chat_api' %}",{
+        method:"POST",
+        headers:{
+          "X-CSRFToken":"{{ csrf_token }}",
+          "Content-Type":"application/x-www-form-urlencoded"
+        },
+        body:`message=${encodeURIComponent(msg)}`
+      });
+
+      const data = await res.json();
+      typing.remove();
+
+      // BOT RESPONSE
+      chatBox.innerHTML += `
+        <div class="d-flex mb-3">
+          <img src="{% static 'app/images/logo.jpg' %}" class="chat-avatar me-2">
+          <div class="chat-bubble bot-msg">${data.response}</div>
+        </div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // UPDATE SUGGESTIONS
+      if (data.suggestions && data.suggestions.length > 0) {
+        suggestionBox.innerHTML = data.suggestions
+          .map(s=>`
+            <button class="btn btn-outline-success btn-sm m-1 suggestion-btn">
+              ${s}
+            </button>
+          `).join("");
+        bindButtons();
+      }
+    };
+  });
+}
+bindButtons();
+</script>
+
+<style>
+.chat-body{
+  height:450px;
+  overflow-y:auto;
+  background:#f8fff8
+}
+.chat-avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover
+}
+.chat-bubble{
+  padding:10px 15px;
+  border-radius:15px;
+  max-width:75%
+}
+.bot-msg{
+  background:#eafbe7;
+  border:1px solid #b5e48c
+}
+.user-msg{
+  background:#198754;
+  color:#fff
+}
+</style>
+{% endblock %}
